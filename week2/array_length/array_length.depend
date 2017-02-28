@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1488098019 source:i:\array_length\main.cpp
+	"array_length.h"
+
+1488242303 i:\array_length\array_length.h
+	<iostream>
+
