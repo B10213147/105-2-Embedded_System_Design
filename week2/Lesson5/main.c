@@ -1,5 +1,6 @@
 #include "stm32f4xx.h"                  // Device header
 #include <stdbool.h>
+#include "array_length.h"
 
 bool acomp(int a, int b){ return a > b; }
 bool bcomp(int a, int b){ return a < b; }
@@ -8,13 +9,13 @@ void bubble_Sort(int *a_start, int *a_end);
 void insertion_Sort(int *a_start, int *a_end, bool (*compare)(int, int));
 void swap(int *a, int *b);
 
+int abc[10] = {5, 4, 3, 2, 1, 5, 4, 3, 2, 1};
 int nums[5] = {4, 3, 2, 1, 0};
 int foo[10] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-int main(void){
+int main(void){	
+	selection_Sort(abc, ARRAY_LENGTH(abc));
 	bubble_Sort(nums, nums + 5);
 	insertion_Sort(foo + 2, foo + 9, bcomp);
-	//selection_Sort(nums, 5);
-	//selection_Sort(foo, 10);
 	return 0;
 }
 
