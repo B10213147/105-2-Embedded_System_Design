@@ -1,13 +1,7 @@
 #include "stm32f4xx.h"                  // Device header
 #include "gpio.h"
-
-void RCC_AHB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState);
-void RCC_APB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState);
-void TIM_PrescalerConfig(TIM_TypeDef* TIMx, uint16_t Prescaler);
-void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter);
-uint32_t TIM_GetCounter(TIM_TypeDef* TIMx);
-void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState);
-void TIM_GenerateEvent(TIM_TypeDef* TIMx, uint16_t TIM_EventSource);
+#include "rcc.h"
+#include "timer.h"
 
 int main(void){
 	RCC_AHB1PeriphClockCmd(RCC_AHB1ENR_GPIOAEN, ENABLE);
@@ -42,47 +36,4 @@ int main(void){
 		}
 	}
 	return 0;
-}
-
-void RCC_AHB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState){
-	if(NewState != DISABLE){
-		RCC->AHB1ENR |= RCC_Periph;
-	}
-	else{
-		RCC->AHB1ENR &= ~RCC_Periph;
-	}	
-}
-
-void RCC_APB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState){
-	if(NewState != DISABLE){
-		RCC->APB1ENR |= RCC_Periph;
-	}
-	else{
-		RCC->APB1ENR &= ~RCC_Periph;
-	}	
-}
-
-void TIM_PrescalerConfig(TIM_TypeDef* TIMx, uint16_t Prescaler){
-	TIMx->PSC = Prescaler;
-}
-
-void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter){
-	TIMx->CNT = Counter;
-}
-
-uint32_t TIM_GetCounter(TIM_TypeDef* TIMx){
-	return TIMx->CNT;
-}
-
-void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState){
-	if(NewState != DISABLE){
-		TIMx->CR1 |= TIM_CR1_CEN;
-	}
-	else{
-		TIMx->CR1 &= ~TIM_CR1_CEN;
-	}
-}
-
-void TIM_GenerateEvent(TIM_TypeDef* TIMx, uint16_t TIM_EventSource){
-	TIMx->EGR = TIM_EventSource;
 }
