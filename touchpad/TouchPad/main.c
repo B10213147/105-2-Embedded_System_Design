@@ -23,8 +23,8 @@ int main(void){
 	
 	while(1){
 		if(GPIO_ReadInputDataBit(GPIOC, 3)){
-			for(int i = 0; i < 16; i++){
-				delay_us(20);
+			delay_us(20);
+			for(int i = 0; i < 16; i++){				
 				GPIO_WriteBit(GPIOC, 2, 1);
 				delay_us(5);
 				keys[i] = GPIO_ReadInputDataBit(GPIOC, 3);
@@ -52,9 +52,8 @@ void startup(void){
 	RCC_AHB1PeriphClockCmd(RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOCEN, ENABLE);
 	RCC_APB1PeriphClockCmd(RCC_APB1ENR_TIM2EN | RCC_APB1ENR_TIM3EN, ENABLE);
 
-	GPIO_Set_Direction(GPIOA, 0, 0x0020);
-	GPIO_Set_Direction(GPIOC, 0x0008, 0x0004);
-	//GPIOC->PUPDR |= (0x1 << 2 * 2) | (0x1 << 2 * 3);
+	GPIO_Set_Direction(GPIOA, 0, 0x0020);	// LD2: PA5
+	GPIO_Set_Direction(GPIOC, 0x0008, 0x0004);	// SCL: PC2, SDO: PC3
 	GPIOC->PUPDR |= (0x1 << 2 * 3);
 	
 	TIM_SetCounter(TIM3, 0);
@@ -83,8 +82,8 @@ void functionality(void){
 				duty += 0.1;
 			}
 			break;
-		case 15:
-			if(duty > 0.1){
+		case 14:
+			if(duty > 0.2){
 				duty -= 0.1;
 			}
 			break;
