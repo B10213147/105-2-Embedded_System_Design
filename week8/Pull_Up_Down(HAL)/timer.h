@@ -8,5 +8,12 @@ void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter);
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx);
 void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState);
 void TIM_GenerateEvent(TIM_TypeDef* TIMx, uint16_t TIM_EventSource);
+void TIM_SetCompare1(TIM_TypeDef* TIMx, uint32_t Compare1);
+void TIM_SetCompare2(TIM_TypeDef* TIMx, uint32_t Compare2);
+void TIM_SetCompare3(TIM_TypeDef* TIMx, uint32_t Compare3);
+void TIM_SetCompare4(TIM_TypeDef* TIMx, uint32_t Compare4);
+void TIM_ITConfig(TIM_TypeDef* TIMx, uint16_t TIM_IT, FunctionalState NewState);
+ITStatus TIM_GetITStatus(TIM_TypeDef* TIMx, uint16_t TIM_IT);
+void TIM_ClearITPendingBit(TIM_TypeDef* TIMx, uint16_t TIM_IT);
 
 #endif	// __TIMER_H

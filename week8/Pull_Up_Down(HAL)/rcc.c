@@ -17,3 +17,12 @@ void RCC_APB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState){
 		RCC->APB1ENR &= ~RCC_Periph;
 	}	
 }
+
+void RCC_APB2PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState){
+	if(NewState != DISABLE){
+		RCC->APB2ENR |= RCC_Periph;
+	}
+	else{
+		RCC->APB2ENR &= ~RCC_Periph;
+	}	
+}

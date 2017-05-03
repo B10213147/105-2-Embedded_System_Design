@@ -5,5 +5,6 @@
 
 void RCC_AHB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState);
 void RCC_APB1PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState);
+void RCC_APB2PeriphClockCmd(uint32_t RCC_Periph, FunctionalState NewState);
 
 #endif	// __RCC_H
