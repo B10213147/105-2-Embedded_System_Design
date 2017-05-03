@@ -29,7 +29,7 @@ void EXTI15_10_IRQHandler(void){
 int pin = 0;
 void TIM2_IRQHandler(void){
 	if((TIM2->SR & TIM_SR_CC1IF) != 0){
-		TIM2->CNT = 0;
+		TIM_SetCounter(TIM2, 0);
 		if(pin != 0){	// High period timeout
 			TIM2->CCR1 = nL;
 		}
@@ -39,7 +39,7 @@ void TIM2_IRQHandler(void){
 		pin ^= 1;
 		GPIO_WriteBit(GPIOA, 5, pin);
 	
-		TIM2->SR &= ~TIM_SR_CC1IF;
+		TIM2->SR = ~TIM_SR_CC1IF;
 	}
 }
 
