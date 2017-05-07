@@ -13,6 +13,16 @@
 #define TIM_IT_CC4			((uint16_t)0x0010)
 #define TIM_IT_Trigger		((uint16_t)0x0040)
 
+/** @defgroup TIM_Event_Source 
+  * @{
+  */
+#define TIM_EventSource_Update             ((uint16_t)0x0001)
+#define TIM_EventSource_CC1                ((uint16_t)0x0002)
+#define TIM_EventSource_CC2                ((uint16_t)0x0004)
+#define TIM_EventSource_CC3                ((uint16_t)0x0008)
+#define TIM_EventSource_CC4                ((uint16_t)0x0010)
+#define TIM_EventSource_Trigger            ((uint16_t)0x0040)
+
 void TIM_PrescalerConfig(TIM_TypeDef* TIMx, uint16_t Prescaler);
 void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter);
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx);
