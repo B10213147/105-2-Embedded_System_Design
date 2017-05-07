@@ -3,6 +3,16 @@
 
 #include "stm32f4xx.h"                  // Device header
 
+/** @defgroup TIM_interrupt_sources 
+  * @{
+  */
+#define TIM_IT_Update		((uint16_t)0x0001)
+#define TIM_IT_CC1			((uint16_t)0x0002)
+#define TIM_IT_CC2			((uint16_t)0x0004)
+#define TIM_IT_CC3			((uint16_t)0x0008)
+#define TIM_IT_CC4			((uint16_t)0x0010)
+#define TIM_IT_Trigger		((uint16_t)0x0040)
+
 void TIM_PrescalerConfig(TIM_TypeDef* TIMx, uint16_t Prescaler);
 void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter);
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx);
