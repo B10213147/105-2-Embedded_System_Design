@@ -76,7 +76,6 @@ void startup(void){
 	
 	TIM_SetCounter(TIM2, 0);
 	TIM_PrescalerConfig(TIM2, 16000 - 1, TIM_PSCReloadMode_Immediate);
-	TIM_GenerateEvent(TIM2, TIM_EventSource_Update);
 	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
 	TIM_SetCompare1(TIM2, nL);
 	NVIC_EnableIRQ(TIM2_IRQn);
