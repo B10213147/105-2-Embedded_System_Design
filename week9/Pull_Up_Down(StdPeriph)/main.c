@@ -83,9 +83,11 @@ void startup(void){
 	TIM_Cmd(TIM2, ENABLE);
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
-	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource10 | EXTI_PinSource13);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource10);
+	SYSCFG_EXTILineConfig(EXTI_PortSourceGPIOC, EXTI_PinSource13);
 	EXTI_InitTypeDef EXTI_InitStruct;
 	EXTI_InitStruct.EXTI_Line = EXTI_Line10 | EXTI_Line13;
+	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
 	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Falling;
 	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
 	EXTI_Init(&EXTI_InitStruct);
