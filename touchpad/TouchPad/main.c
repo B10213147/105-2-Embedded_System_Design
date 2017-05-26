@@ -10,17 +10,12 @@ void functionality(void);
 
 int frequency = 1;
 float duty = 0.5;
-uint32_t nL, nH, next;
-int pin = 0;
+uint32_t nL, nH;
+uint8_t pin = 0;
 uint8_t keys[16];
 int main(void){
 	startup();
-	
-	int period = SystemCoreClock / 16000 / frequency;
-	nH = period * duty;
-	nL = period - nH;
-	next = TIM_GetCounter(TIM3) + nL;
-	
+
 	while(1){
 		if(GPIO_ReadInputDataBit(GPIOC, 3)){
 			delay_us(20);
@@ -33,33 +28,46 @@ int main(void){
 			}
 			functionality();
 		}
-		if(TIM_GetCounter(TIM2) > next){
-			if(pin != 0){
-				next += nL;
-			}
-			else{
-				next += nH;
-			}
-			pin ^= 1;
-			GPIO_WriteBit(GPIOA, 5, pin);
-		}
 	}
 	
 	return 0;
 }
 
+void TIM2_IRQHandler(void){
+	if(TIM_GetITStatus(TIM2, TIM_IT_CC1) != 0){
+		TIM_SetCounter(TIM2, 0);
+		if(pin != 0){	// High period timeout
+			TIM_SetCompare1(TIM2, nL);
+		}
+		else{	// Low period timeout
+			TIM_SetCompare1(TIM2, nH);
+		}
+		pin ^= 1;
+		GPIO_WriteBit(GPIOA, 5, pin);
+	
+		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
+	}
+}
+
 void startup(void){
-	RCC_AHB1PeriphClockCmd(RCC_AHB1ENR_GPIOAEN | RCC_AHB1ENR_GPIOCEN, ENABLE);
-	RCC_APB1PeriphClockCmd(RCC_APB1ENR_TIM2EN | RCC_APB1ENR_TIM3EN, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOC, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3, ENABLE);
 
 	GPIO_Set_Direction(GPIOA, 0, 0x0020);	// LD2: PA5
 	GPIO_Set_Direction(GPIOC, 0x0008, 0x0004);	// SCL: PC2, SDO: PC3
 	GPIOC->PUPDR |= (0x1 << 2 * 3);
 	
+	int period = SystemCoreClock / 16000 / frequency;
+	nH = period * duty;
+	nL = period - nH;
+	
 	TIM_SetCounter(TIM3, 0);
 	TIM_SetCounter(TIM2, 0);
 	TIM_PrescalerConfig(TIM2, 16000 - 1);
-	TIM_GenerateEvent(TIM2, TIM_EGR_UG);	
+	TIM_GenerateEvent(TIM2, TIM_EventSource_Update);
+	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
+	TIM_SetCompare1(TIM2, nL);
+	NVIC_EnableIRQ(TIM2_IRQn);
 	TIM_Cmd(TIM2, ENABLE);
 }
 
@@ -97,22 +105,22 @@ void functionality(void){
 
 void delay_us(int n){
 	TIM_PrescalerConfig(TIM3, 16 - 1);
-	TIM_GenerateEvent(TIM3, TIM_EGR_UG);	
+	TIM_GenerateEvent(TIM3, TIM_EventSource_Update);	
 	TIM_Cmd(TIM3, ENABLE);
 
-	while(TIM3->CNT < n);	
+	while(TIM_GetCounter(TIM3) < n);	
 	
 	TIM_Cmd(TIM3, DISABLE);
-	TIM3->CNT = 0;
+	TIM_SetCounter(TIM3, 0);
 }
 
 void delay_ms(int n){
 	TIM_PrescalerConfig(TIM3, 16000 - 1);
-	TIM_GenerateEvent(TIM3, TIM_EGR_UG);	
+	TIM_GenerateEvent(TIM3, TIM_EventSource_Update);	
 	TIM_Cmd(TIM3, ENABLE);
 
-	while(TIM3->CNT < n);	
+	while(TIM_GetCounter(TIM3) < n);	
 	
 	TIM_Cmd(TIM3, DISABLE);
-	TIM3->CNT = 0;
+	TIM_SetCounter(TIM3, 0);
 }
