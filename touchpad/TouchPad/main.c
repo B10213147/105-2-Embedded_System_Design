@@ -39,18 +39,14 @@ void TIM2_IRQHandler(void){
 	}
 }
 
-uint8_t DV = 0, last_state = 0, pres_state = 0;
+uint8_t DV = 0;
 void EXTI3_IRQHandler(void){
 	if(EXTI_GetITStatus(EXTI_Line3) != 0){
 		if(DV == 0){
-			pres_state = GPIO_ReadInputDataBit(GPIOC, 3);
-			if((last_state != 0) && (pres_state == 0)){
-				DV = 1;
-				TIM_SetCounter(TIM3, 0);
-				TIM_SetCompare1(TIM3, 16 * 20);
-				TIM_Cmd(TIM3, ENABLE);
-			}
-			last_state = pres_state;
+			DV = 1;
+			TIM_SetCounter(TIM3, 0);
+			TIM_SetCompare1(TIM3, 16 * 20);
+			TIM_Cmd(TIM3, ENABLE);
 		}
 		EXTI_ClearITPendingBit(EXTI_Line3);
 	}	
@@ -58,7 +54,7 @@ void EXTI3_IRQHandler(void){
 
 uint8_t scl_c = 0, scl_pin = 0;
 uint32_t scl_nH, scl_nL;
-uint32_t scl_freq = 100000;
+uint32_t scl_freq = 80000;
 void TIM3_IRQHandler(void){
 	if(TIM_GetITStatus(TIM3, TIM_IT_CC1) != 0){
 		TIM_SetCounter(TIM3, 0);
@@ -91,14 +87,14 @@ void startup(void){
 
 	GPIO_Set_Direction(GPIOA, 0, 0x0020);	// LD2: PA5
 	GPIO_Set_Direction(GPIOC, 0x0008, 0x0004);	// SCL: PC2, SDO: PC3
-	GPIOC->PUPDR |= (0x1 << 2 * 2) | (0x1 << 2 * 3);
+	GPIOC->PUPDR |= (0x1 << 2 * 3);
 	
 	int period = SystemCoreClock / 16000 / led_freq;
 	led_nH = period * duty;
 	led_nL = period - led_nH;
 	period = SystemCoreClock / scl_freq;
 	scl_nH = period * duty;
-	scl_nL = period - led_nH;
+	scl_nL = period - scl_nH;
 	
 	// Timer3 use for SCL clock generation
 	TIM_SetCounter(TIM3, 0);
