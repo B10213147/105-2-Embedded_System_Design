@@ -39,46 +39,20 @@ void TIM2_IRQHandler(void){
 	}
 }
 
-uint8_t DV = 0;
 void EXTI3_IRQHandler(void){
 	if(EXTI_GetITStatus(EXTI_Line3) != 0){
-		if(DV == 0){
-			DV = 1;
-			TIM_SetCounter(TIM3, 0);
-			TIM_SetCompare1(TIM3, 16 * 20);
-			TIM_Cmd(TIM3, ENABLE);
+		delay_us(20);
+		for(int i = 0; i < 16; i++){				
+			GPIO_WriteBit(GPIOC, 2, 1);
+			delay_us(1);
+			keys[i] = GPIO_ReadInputDataBit(GPIOC, 3);
+			GPIO_WriteBit(GPIOC, 2, 0);
+			delay_us(1);	
 		}
+		functionality();
+		
 		EXTI_ClearITPendingBit(EXTI_Line3);
 	}	
-}
-
-uint8_t scl_c = 0, scl_pin = 0;
-uint32_t scl_nH, scl_nL;
-uint32_t scl_freq = 80000;
-void TIM3_IRQHandler(void){
-	if(TIM_GetITStatus(TIM3, TIM_IT_CC1) != 0){
-		TIM_SetCounter(TIM3, 0);
-		
-		if(scl_pin != 0){	// High period timeout
-			keys[scl_c] = GPIO_ReadInputDataBit(GPIOC, 3);
-			TIM_SetCompare1(TIM3, scl_nL);
-			scl_c++;
-		}
-		else{	// Low period timeout
-			TIM_SetCompare1(TIM3, scl_nH);
-		}
-		scl_pin ^= 1;
-		GPIO_WriteBit(GPIOC, 2, scl_pin);
-		
-		if(scl_c == 16){
-			TIM_Cmd(TIM3, DISABLE);
-			functionality();
-			scl_c = 0;
-			DV = 0;
-		}
-		
-		TIM_ClearITPendingBit(TIM3, TIM_IT_CC1);
-	}
 }
 
 void startup(void){
@@ -92,14 +66,9 @@ void startup(void){
 	int period = SystemCoreClock / 16000 / led_freq;
 	led_nH = period * duty;
 	led_nL = period - led_nH;
-	period = SystemCoreClock / scl_freq;
-	scl_nH = period * duty;
-	scl_nL = period - scl_nH;
 	
 	// Timer3 use for SCL clock generation
 	TIM_SetCounter(TIM3, 0);
-	TIM_ITConfig(TIM3, TIM_IT_CC1, ENABLE);
-	NVIC_EnableIRQ(TIM3_IRQn);
 	
 	// Timer2 use for LED blink
 	TIM_SetCounter(TIM2, 0);
@@ -112,7 +81,7 @@ void startup(void){
 	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SYSCFG, ENABLE);
 	SYSCFG->EXTICR[0] |= SYSCFG_EXTICR1_EXTI3 & SYSCFG_EXTICR1_EXTI3_PC;
-	EXTI_Init(EXTI_Line3, EXTI_Line3, EXTI_Line3, ENABLE);	
+	EXTI_Init(EXTI_Line3, EXTI_Line3, 0, ENABLE);	
 	NVIC_EnableIRQ(EXTI3_IRQn);	
 }
 
@@ -135,7 +104,7 @@ void functionality(void){
 				duty += 0.1;
 			}
 			break;
-		case 14:
+		case 15:
 			if(duty > 0.2){
 				duty -= 0.1;
 			}
