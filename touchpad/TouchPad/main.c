@@ -24,24 +24,23 @@ int main(void){
 }
 
 void TIM2_IRQHandler(void){
-	if(TIM_GetITStatus(TIM2, TIM_IT_CC1) != 0){
-		TIM_SetCounter(TIM2, 0);
+	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != 0){
 		if(led_pin != 0){	// High period timeout
-			TIM_SetCompare1(TIM2, led_nL);
+			TIM_SetAutoreload(TIM2, led_nL);
 		}
 		else{	// Low period timeout
-			TIM_SetCompare1(TIM2, led_nH);
+			TIM_SetAutoreload(TIM2, led_nH);
 		}
 		led_pin ^= 1;
 		GPIO_WriteBit(GPIOA, 5, led_pin);
 	
-		TIM_ClearITPendingBit(TIM2, TIM_IT_CC1);
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 	}
 }
 
 void EXTI3_IRQHandler(void){
 	if(EXTI_GetITStatus(EXTI_Line3) != 0){
-		delay_us(20);
+		delay_us(100);
 		for(int i = 0; i < 16; i++){				
 			GPIO_WriteBit(GPIOC, 2, 1);
 			delay_us(1);
@@ -69,13 +68,15 @@ void startup(void){
 	
 	// Timer3 use for SCL clock generation
 	TIM_SetCounter(TIM3, 0);
+	TIM_ARRPreloadConfig(TIM3, ENABLE);
+	TIM_SelectOnePulseMode(TIM3, TIM_OPMode_Single);
 	
 	// Timer2 use for LED blink
 	TIM_SetCounter(TIM2, 0);
 	TIM_PrescalerConfig(TIM2, 16000 - 1);
 	TIM_GenerateEvent(TIM2, TIM_EventSource_Update);
-	TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
-	TIM_SetCompare1(TIM2, led_nL);
+	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
+	TIM_SetAutoreload(TIM2, led_nL);
 	NVIC_EnableIRQ(TIM2_IRQn);
 	TIM_Cmd(TIM2, ENABLE);
 	
@@ -119,22 +120,16 @@ void functionality(void){
 
 void delay_us(int n){
 	TIM_PrescalerConfig(TIM3, 16 - 1);
+	TIM_SetAutoreload(TIM3, n);
 	TIM_GenerateEvent(TIM3, TIM_EventSource_Update);	
 	TIM_Cmd(TIM3, ENABLE);
-
-	while(TIM_GetCounter(TIM3) < n);	
-	
-	TIM_Cmd(TIM3, DISABLE);
-	TIM_SetCounter(TIM3, 0);
+	while(TIM_GetCounter(TIM3));
 }
 
 void delay_ms(int n){
 	TIM_PrescalerConfig(TIM3, 16000 - 1);
+	TIM_SetAutoreload(TIM3, n);
 	TIM_GenerateEvent(TIM3, TIM_EventSource_Update);	
 	TIM_Cmd(TIM3, ENABLE);
-
-	while(TIM_GetCounter(TIM3) < n);	
-	
-	TIM_Cmd(TIM3, DISABLE);
-	TIM_SetCounter(TIM3, 0);
+	while(TIM_GetCounter(TIM3));
 }
