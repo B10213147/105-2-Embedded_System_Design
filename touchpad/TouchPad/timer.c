@@ -8,8 +8,26 @@ void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter){
 	TIMx->CNT = Counter;
 }
 
+void TIM_SetAutoreload(TIM_TypeDef* TIMx, uint32_t Autoreload){
+	TIMx->ARR = Autoreload;
+}
+
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx){
 	return TIMx->CNT;
+}
+
+void TIM_ARRPreloadConfig(TIM_TypeDef* TIMx, FunctionalState NewState){
+	if(NewState != DISABLE){
+		TIMx->CR1 |= TIM_CR1_ARPE;
+	}
+	else{
+		TIMx->CR1 &= ~TIM_CR1_ARPE;
+	}	
+}
+
+void TIM_SelectOnePulseMode(TIM_TypeDef* TIMx, uint16_t TIM_OPMode){
+	TIMx->CR1 &= ~TIM_CR1_OPM;
+	TIMx->CR1 |= TIM_OPMode;
 }
 
 void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState){

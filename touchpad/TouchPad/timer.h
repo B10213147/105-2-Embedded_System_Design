@@ -3,6 +3,12 @@
 
 #include "stm32f4xx.h"                  // Device header
 
+/** @defgroup TIM_One_Pulse_Mode 
+  * @{
+  */
+#define TIM_OPMode_Single                  ((uint16_t)0x0008)
+#define TIM_OPMode_Repetitive              ((uint16_t)0x0000)
+
 /** @defgroup TIM_interrupt_sources 
   * @{
   */
@@ -25,7 +31,10 @@
 
 void TIM_PrescalerConfig(TIM_TypeDef* TIMx, uint16_t Prescaler);
 void TIM_SetCounter(TIM_TypeDef* TIMx, uint32_t Counter);
+void TIM_SetAutoreload(TIM_TypeDef* TIMx, uint32_t Autoreload);
 uint32_t TIM_GetCounter(TIM_TypeDef* TIMx);
+void TIM_ARRPreloadConfig(TIM_TypeDef* TIMx, FunctionalState NewState);
+void TIM_SelectOnePulseMode(TIM_TypeDef* TIMx, uint16_t TIM_OPMode);
 void TIM_Cmd(TIM_TypeDef* TIMx, FunctionalState NewState);
 void TIM_GenerateEvent(TIM_TypeDef* TIMx, uint16_t TIM_EventSource);
 void TIM_SetCompare1(TIM_TypeDef* TIMx, uint32_t Compare1);
