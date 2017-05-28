@@ -375,17 +375,27 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>User</GroupName>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\interrupt.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Driver</GroupName>
           <Files>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main.c</FilePath>
             </File>
             <File>
               <FileName>rcc.c</FileName>
@@ -396,6 +406,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\exti.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -11,3 +11,4 @@
 .\objects\main.o: gpio.h
 .\objects\main.o: rcc.h
 .\objects\main.o: timer.h
+.\objects\main.o: exti.h
